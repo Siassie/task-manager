@@ -19,7 +19,7 @@ const register = async (req, res) => {
         name,
         surname,
         email,
-        password // ⚠️ In production: hash this with bcrypt
+        password 
     };
 
     users.push(newUser);
