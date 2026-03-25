@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginCard({ title }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+
 
   const handleLogin = async () => {
     setLoading(true);
@@ -26,7 +29,7 @@ function LoginCard({ title }) {
       }
 
       console.log("Login successful", data); // you get the token here
-      alert("Login successful!");
+      navigate('/task/add');
 
       // optional: save token to localStorage
       localStorage.setItem("token", data.token);
@@ -70,6 +73,8 @@ function LoginCard({ title }) {
       >
         {loading ? "Logging in..." : "Login"}
       </button>
+
+      <p className="text-gray-500">Don't have an account? <a className="text-blue-500" href="/signup">Signup</a></p>
     </div>
   );
 }

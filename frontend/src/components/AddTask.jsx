@@ -1,40 +1,51 @@
 import React, { useState } from "react";
 
 const AddTask = ({ title }) => {
-    const [ task, setTask ] = useState('');
-    const [ discription, setDiscription ] = useState('');
-    const [ due, setDue ] = useState('');
-    const [ error, setError ] = useState('');
-    const [ loading, setLoading] = useState(false);
+    const [taskTitle, setTaskTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [due, setDue] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handelAddTask = async () => {
+    const handleAddTask = async () => {
         setLoading(true);
         setError("");
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setError("You must be logged in.");
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch("http://localhost:5000/todo/add", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ task, discription, dueDate: due })
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // ✅ include JWT
+                },
+                body: JSON.stringify({ title: taskTitle, description, dueDate: due })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                setError(data.message || "Task added");
-                setLoading(false);
+                setError(data.message || "Failed to add task");
                 return;
-            };
+            }
 
-            console.log("Task added", data); // you get the token here
-            alert("Task added");
-        } catch {
-            setError(data.message || 'Error occured when trying to add task');
-            setLoading(false);
-            return;
+            console.log("Task added", data.task);
+            alert("Task added!");
+            setTaskTitle('');
+            setDescription('');
+            setDue('');
+        } catch (err) {
+            console.error(err);
+            setError('Error occurred when trying to add task');
         } finally {
             setLoading(false);
-        };
+        }
     };
 
     return (
@@ -43,39 +54,36 @@ const AddTask = ({ title }) => {
 
             {error && <p className="text-red-500 mb-2">{error}</p>}
 
-            <label htmlFor="task" className="text-base text-gray-500">Task</label>
+            <label>Task</label>
             <input
-                id="task"
                 type="text"
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.target.value)}
                 className="rounded-lg w-full p-2 mb-4 border border-gray-300"
             />
 
-            <label htmlFor="discription" className="text-base text-gray-500">Discription</label>
+            <label>Description</label>
             <input
-                id="discription"
                 type="text"
-                value={discription}
-                onChange={(e) => setDiscription(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="rounded-lg w-full p-2 mb-4 border border-gray-300"
             />
 
-            <label htmlFor="due" className="text-base text-gray-500">Due Date - YYYY-MM-DD</label>
+            <label>Due Date (YYYY-MM-DD)</label>
             <input
-                id="due"
-                type="due"
+                type="date"
                 value={due}
                 onChange={(e) => setDue(e.target.value)}
                 className="rounded-lg w-full p-2 mb-4 border border-gray-300"
             />
 
             <button
-                onClick={handelAddTask}
+                onClick={handleAddTask}
                 disabled={loading}
                 className={`bg-blue-500 rounded-lg w-full p-2 text-white hover:bg-blue-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-                {loading ? "Logging in..." : "Login"}
+                {loading ? "Adding..." : "Add Task"}
             </button>
         </div>
     )

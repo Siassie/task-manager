@@ -31,16 +31,18 @@ const TaskCard = () => {
 
     return (
         <div className="flex flex-wrap gap-4">
-            {tasks.map((t) => (
+            {tasks
+                .filter((t) => t.complete === false)
+                .map((t) => (
                 <div
-                key={t.id}
-                className="w-64 bg-white p-4 rounded-lg shadow-lg"
+                    key={t.id}
+                    className="w-64 bg-white p-4 rounded-lg shadow-lg"
                 >
-                <h3 className="font-bold">{t.task}</h3>
-                <p>{t.discription}</p>
-                <small>{t.date}</small>
+                    <h3 className="font-bold">{t.task}</h3>
+                    <p>{t.discription}</p>
+                    <small>{t.date}</small>
                 </div>
-            ))}
+                ))}
         </div>
     );
 };

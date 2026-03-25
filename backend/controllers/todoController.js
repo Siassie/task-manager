@@ -1,50 +1,56 @@
-const todo = require('../model/todoModel');
+const prisma = require('../src/prisma');
 
-const addTask = async(request, response) => {
-    const { task, discription, dueDate } = request.body;
+// Add a task
+const addTask = async (req, res) => {
+    const { title, description, dueDate } = req.body;
 
-    if (!task || !dueDate) {
-        return response.status(401).json({
-            message: 'Missing required fields'
-        });
-    };
-
-    const dateObj = new Date(dueDate);
-
-    if (isNaN(dateObj.getDate())) { 
-        return response.status(401).json({
-            message: 'Due date is not in the correct format. Please use a valid date (YYYY-MM-DD).'
-        });
+    if (!title) {
+        return res.status(400).json({ message: 'Title is required' });
     }
 
-    // This converts "2026-03-26T00:00:00.000Z" to "2026-03-26"
-    const formattedDate = dateObj.toISOString().split('T')[0];
+    try {
+        const taskData = {
+            title,
+            description: description || '',
+            completed: false,
+            user: { connect: { id: req.user.id } } // connect to existing user
+        };
 
-    const completed = false;
+        // Optional: store dueDate if Prisma schema has it
+        if (dueDate) {
+            const dateObj = new Date(dueDate);
+            if (isNaN(dateObj.getTime())) {
+                return res.status(400).json({ message: 'Invalid dueDate. Use YYYY-MM-DD format.' });
+            }
+            taskData.dueDate = dateObj; // requires Prisma Task.dueDate DateTime? field
+        }
 
-    const newTask = {
-        id: Date.now(),
-        task,
-        discription,
-        date: formattedDate, // Now stores "YYYY-MM-DD"
-        completed
-    };
+        const newTask = await prisma.task.create({
+            data: taskData
+        });
 
-    todo.push(newTask);
+        console.log(`Task added by user ${req.user.name}`);
+        return res.status(201).json({ task: newTask });
 
-    return response.status(200).json({ newTask });
+    } catch (err) {
+        console.error('Add task error', err);
+        return res.status(500).json({ message: 'Server error' });
+    }
 };
 
-const viewTasks = async(request, response) => {
-    if (todo.length === 0) {
-        return response.status(401).json({
-            message: "No tasks found"
+// Get all tasks for logged-in user
+const viewTasks = async (req, res) => {
+    try {
+        const tasks = await prisma.task.findMany({
+            where: { userId: req.user.id },
+            orderBy: { id: 'asc' } // or dueDate if added
         });
-    };
 
-    return response.status(200).json({
-        tasks: todo
-    });
+        return res.status(200).json({ tasks });
+    } catch (err) {
+        console.error('View tasks error', err);
+        return res.status(500).json({ message: 'Server error' });
+    }
 };
 
 module.exports = { addTask, viewTasks };

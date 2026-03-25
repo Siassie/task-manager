@@ -17,7 +17,7 @@ function App() {
           }
         />
 
-        <Route path="/add" element={<AddTask title="Add Task" />} />
+        <Route path="/task/add" element={<AddTask title="Add Task" />} />
         <Route path="/signup" element={<SignupCard title="Sign Up" />} />
         <Route path="/login" element={<LoginCard title="Login" />} />
       </Routes>
