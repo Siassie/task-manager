@@ -29,11 +29,11 @@ function LoginCard({ title }) {
       }
 
       console.log("Login successful", data); // you get the token here
-      navigate('/task/add');
 
       // optional: save token to localStorage
       localStorage.setItem("token", data.token);
 
+      navigate('/');
     } catch (err) {
       console.error(err);
       setError("Server error. Try again later.");

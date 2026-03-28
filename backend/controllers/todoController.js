@@ -53,4 +53,33 @@ const viewTasks = async (req, res) => {
     }
 };
 
-module.exports = { addTask, viewTasks };
+const deleteTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const task = await prisma.task.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Ensure user owns the task
+        if (task.userId !== req.user.id) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        await prisma.task.delete({
+            where: { id: Number(id) }
+        });
+
+        return res.status(200).json({ message: 'Task deleted successfully' });
+
+    } catch (err) {
+        console.log('Delete task error', err);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { addTask, viewTasks, deleteTask };

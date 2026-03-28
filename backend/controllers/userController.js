@@ -66,19 +66,20 @@ const login = async (req, res) => {
 
         // 4️⃣ Create JWT payload
         const valForJWT = {
-            userId: user.id,
+            id: user.id, // ✅ FIXED
             name: user.name + ' ' + user.surname,
             email: user.email
         };
 
         const token = signJWT(valForJWT);
 
+        console.log(token);
+
         // 5️⃣ Return response
         return res.status(200).json({
             message: 'Login successful',
             token
         });
-
     } catch (err) {
         console.error('Login error:', err);
         return res.status(500).json({ message: 'Server error' });
