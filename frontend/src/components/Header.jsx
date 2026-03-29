@@ -10,6 +10,7 @@ export default function Header() {
         <NavLink to="/task/all">Tasks</NavLink>
         <NavLink to="/task/add">Add Task</NavLink>
         <NavLink to="/task/completed">Completed Tasks</NavLink>
+        <NavLink to="/user/profile">Profile</NavLink>
       </nav>
     </header>
   );

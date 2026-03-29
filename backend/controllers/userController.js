@@ -88,10 +88,23 @@ const login = async (req, res) => {
 
 // Protected route example
 const getProfile = async (req, res) => {
-    return res.status(200).json({
-        message: 'Protected route accessed',
-        user: req.user
-    });
+    try {
+        const userId = req.user.id; // ✅ from JWT
+
+        const user = await prisma.user.findUnique({
+            where: { id: Number(userId) }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'No user account found.' });
+        }
+
+        res.status(200).json({ user });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
 };
 
 module.exports = { register, login, getProfile };

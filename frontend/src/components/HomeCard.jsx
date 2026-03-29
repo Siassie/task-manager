@@ -58,7 +58,7 @@ export default function HomeCard() {
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition">
             <h3 className="text-xl font-semibold mb-2">Fast & Secure</h3>
             <p className="text-gray-600">
-              Your data is محفوظ and accessible anytime, anywhere.
+              Your data is secure and accessible anytime, anywhere.
             </p>
           </div>
 

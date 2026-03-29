@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import CompletedTasksPage from "./pages/CompletedTasksPage";
 import AllTasksPage from "./pages/AllTasksPage";
+import ProfileCard from "./components/ProfileCard";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       {/* App routes (with header) */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/user/profile" element={<ProfileCard />} />
         <Route path="/task/all" element={<AllTasksPage />} />
         <Route path="/task/add" element={<AddTaskPage />} />
         <Route path="/task/completed" element={<CompletedTasksPage />} />
