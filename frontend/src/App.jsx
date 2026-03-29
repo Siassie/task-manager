@@ -1,27 +1,47 @@
-import { Routes, Route } from 'react-router-dom';
-import LoginCard from './components/Login';
-import SignupCard from './components/signupCard';
-import AddTask from './components/AddTask';
-import TaskCard from './components/TaskCard';
+import { Routes, Route } from "react-router-dom";
+
+import MainLayout from "./layouts/MainLayout";
+import AuthLayout from "./layouts/AuthLayout";
+
+import Home from "./pages/Home";
+import AddTaskPage from "./pages/AddTaskPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import CompletedTasksPage from "./pages/CompletedTasksPage";
+import AllTasksPage from "./pages/AllTasksPage";
 
 function App() {
   return (
-    <div className="flex flex-row gap-4 justify-center items-center min-h-screen bg-gray-100">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="flex-row">
-              <TaskCard />
-            </div>
-          }
-        />
+    <Routes>
 
-        <Route path="/task/add" element={<AddTask title="Add Task" />} />
-        <Route path="/signup" element={<SignupCard title="Sign Up" />} />
-        <Route path="/login" element={<LoginCard title="Login" />} />
-      </Routes>
-    </div>
+      {/* App routes (with header) */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/task/all" element={<AllTasksPage />} />
+        <Route path="/task/add" element={<AddTaskPage />} />
+        <Route path="/task/completed" element={<CompletedTasksPage />} />
+      </Route>
+
+      {/* Auth routes (no header) */}
+      <Route
+        path="/login"
+        element={
+          <AuthLayout>
+            <LoginPage />
+          </AuthLayout>
+        }
+      />
+
+      <Route
+        path="/signup"
+        element={
+          <AuthLayout>
+            <SignupPage />
+          </AuthLayout>
+        }
+      />
+
+    </Routes>
   );
 }
 
