@@ -82,4 +82,34 @@ const deleteTask = async (req, res) => {
     }
 };
 
-module.exports = { addTask, viewTasks, deleteTask };
+const markAsCompleted = async(req, res) => {
+    try {
+        const { id } = req.params;
+
+        const task = await prisma.task.findUnique({
+            where: {id: Number(id)}
+        });
+
+        if (!task) {
+            return res.status(402).json({
+                message: 'No task found'
+            });
+        };
+
+        await prisma.task.update({
+            where: {id: Number(id)},
+            data: {completed: true}
+        });
+
+        return res.status(200).json({
+            message: 'Task marked as completed'
+        });
+    } catch {
+        console.log('Mark as completed error', err);
+        return res.status(500).json({
+            message: 'Server error'
+        });
+    };
+};
+
+module.exports = { addTask, viewTasks, deleteTask, markAsCompleted };

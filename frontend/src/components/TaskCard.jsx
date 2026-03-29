@@ -69,6 +69,41 @@ const TaskCard = () => {
     }
   };
 
+  const markAsCompleted = async (id) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("No token found. Please login.");
+      return;
+    };
+
+    try {
+      const response = await fetch(`http://localhost:5000/todo/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      console.log("MARK AS COMPLETED RESPONSE:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to mark task as completed");
+      };
+
+      // Update task in state
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === id ? { ...t, completed: true } : t
+        )
+      );
+    } catch (err) {
+      setError(err.message);
+    };
+  }
+
   // Fetch tasks on mount
   useEffect(() => {
     fetchTasks();
@@ -96,6 +131,12 @@ const TaskCard = () => {
                 onClick={() => deleteTask(t.id)}
               >
                 Delete
+              </button>
+              <button
+                className="bg-green-500 rounded-lg w-full p-2 text-white hover:bg-green-600 transition"
+                onClick={() => markAsCompleted(t.id)}
+              >
+                Mark as Completed
               </button>
             </div>
           </div>
